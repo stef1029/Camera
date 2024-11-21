@@ -24,29 +24,6 @@ using namespace std::chrono;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-
-#include "Spinnaker.h"
-#include "SpinGenApi/SpinnakerGenApi.h"
-#include <iostream>
-#include <opencv2/opencv.hpp>
-#include <chrono>
-#include <sstream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include "nlohmann/json.hpp"  // Include the nlohmann/json library
-#include <direct.h>           // Include for _mkdir on Windows
-#include <filesystem>
-
-using namespace Spinnaker;
-using namespace Spinnaker::GenApi;
-using namespace Spinnaker::GenICam;
-using namespace std;
-using namespace std::chrono;
-using json = nlohmann::json;
-namespace fs = std::filesystem;
-
 class Tracker
 {
 public:

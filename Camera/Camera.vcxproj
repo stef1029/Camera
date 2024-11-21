@@ -116,12 +116,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\FLIR Systems\Spinnaker\include;C:\Program Files\FLIR Systems\Spinnaker\include\SpinGenApi;C:\opencv\build\include;C:\Libraries\json-develop\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\libraries\Teledyne\Spinnaker\include;C:\dev\libraries\Teledyne\Spinnaker\include\SpinGenApi;C:\dev\libraries\opencv\build\include;C:\dev\libraries\json-develop\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>"C:\opencv\build\x64\vc16\lib";C:\Program Files\FLIR Systems\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\libraries\opencv\build\x64\vc16\lib;C:\dev\libraries\Teledyne\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Spinnaker_v140.lib;opencv_world490.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Dev\libs\Teledyne\Spinnaker\include;C:\Dev\libs\Teledyne\Spinnaker\include\SpinGenApi;C:\Dev\libs\opencv_4-9-0\build\include;C:\Dev\libs\json-develop\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\libs\Teledyne\Spinnaker\include;C:\dev\libs\Teledyne\Spinnaker\include\SpinGenApi;C:\dev\libs\opencv\build\include;C:\dev\libs\json-develop\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -141,12 +141,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Dev\libs\opencv_4-9-0\build\x64\vc16\lib;C:\Dev\libs\Teledyne\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\libs\opencv\build\x64\vc16\lib;C:\dev\libs\Teledyne\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Spinnaker_v140.lib;opencv_world490.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
