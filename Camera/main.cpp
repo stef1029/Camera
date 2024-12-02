@@ -15,6 +15,8 @@
 #include <direct.h>  // Include for _mkdir on Windows
 #include <queue>
 #include <filesystem>
+#include <GLFW/glfw3.h>  // Include GLFW for OpenGL window management
+
 
 using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
@@ -23,6 +25,8 @@ using namespace std;
 using namespace std::chrono;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
+
+
 
 
 class Tracker

@@ -11,6 +11,8 @@
 #include "nlohmann/json.hpp"  // Include the nlohmann/json library
 #include <direct.h>           // Include for _mkdir on Windows
 #include <filesystem>
+#include <GLFW/glfw3.h>  // Include GLFW for OpenGL window management
+#include <GL/gl.h>
 
 using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
@@ -19,6 +21,29 @@ using namespace std;
 using namespace std::chrono;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
+
+GLFWwindow* initializeOpenGL(int width, int height, const std::string& title)
+{
+    // Initialize GLFW
+    if (!glfwInit())
+    {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // Create a GLFW window
+    GLFWwindow* window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    if (!window)
+    {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    glfwMakeContextCurrent(window);
+    glViewport(0, 0, width, height);
+    return window;
+}
 
 class Tracker
 {
@@ -177,7 +202,7 @@ private:
     void captureFrames(bool show_frame, bool save_video)
     {
         auto prev = high_resolution_clock::now();
-        int displayFPS = 15;  // Maximum display FPS
+        int displayFPS = 30;  // Maximum display FPS
         int frame_skip = int(1000 / displayFPS);  // Frame skip duration in ms
 
         // Open the frame ID file in append mode
@@ -188,6 +213,29 @@ private:
         }
 
         bool keepRunning = true;
+
+        // OpenGL: Initialize GLFW for OpenGL window management
+        GLFWwindow* window = nullptr;
+        if (show_frame) {
+            if (!glfwInit()) {
+                cerr << "Error: Failed to initialize GLFW" << endl;
+                return;
+            }
+
+            // Create a GLFW window
+            window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+            if (!window) {
+                cerr << "Error: Failed to create GLFW window" << endl;
+                glfwTerminate();
+                return;
+            }
+
+            glfwMakeContextCurrent(window);
+            glViewport(0, 0, windowWidth, windowHeight);
+
+            // Set OpenGL clear color (background)
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        }
 
         while (keepRunning) {
             // Capture frame from the camera
@@ -234,17 +282,31 @@ private:
                 double elapsedTime = duration_cast<milliseconds>(now - prev).count();
 
                 if (elapsedTime >= frame_skip) {
+                    // Convert image to OpenGL texture format
                     cv::Mat image(cv::Size(imageWidth, imageHeight), CV_8UC1,
                         pResultImage->GetData(), pResultImage->GetStride());
 
+                    // Resize the image to fit the OpenGL window
                     cv::Mat resizedImage;
                     cv::resize(image, resizedImage, cv::Size(windowWidth, windowHeight));
 
-                    cv::imshow(title, resizedImage);
+                    // Clear the OpenGL buffer
+                    glClear(GL_COLOR_BUFFER_BIT);
 
-                    if (cv::waitKey(1) == 27) {  // 'Esc' key pressed
+                    // Use glDrawPixels to display the image
+                    glPixelZoom(1.0f, -1.0f);  // Flip the image vertically
+                    glRasterPos2i(-1, 1);      // Set image position
+                    glDrawPixels(resizedImage.cols, resizedImage.rows, GL_LUMINANCE, GL_UNSIGNED_BYTE, resizedImage.data);
+
+                    // Swap buffers to display the image
+                    glfwSwapBuffers(window);
+
+                    // Poll for input events
+                    glfwPollEvents();
+
+                    // Check if the user pressed the 'Esc' key or closed the window
+                    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(window)) {
                         keepRunning = false;
-                        break;
                     }
 
                     prev = now;  // Reset the previous time for the next displayed frame
@@ -265,8 +327,13 @@ private:
             frame_IDs.clear();
         }
 
+        // Cleanup OpenGL resources
+        if (window) {
+            glfwDestroyWindow(window);
+            glfwTerminate();
+        }
+
         frameIDFile.close();
-        cv::destroyAllWindows();
     }
 
     void saveData()

@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\libs\Teledyne\Spinnaker\include;C:\dev\libs\Teledyne\Spinnaker\include\SpinGenApi;C:\dev\libs\opencv\build\include;C:\dev\libs\json-develop\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\libs\Teledyne\Spinnaker\include;C:\dev\libs\Teledyne\Spinnaker\include\SpinGenApi;C:\Dev\libs\opencv\build\include;C:\dev\libs\json-develop\include;C:\Dev\libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -141,8 +141,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\dev\libs\opencv\build\x64\vc16\lib;C:\dev\libs\Teledyne\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Spinnaker_v140.lib;opencv_world490.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Dev\libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;C:\dev\libs\opencv\build\x64\vc16\lib;C:\dev\libs\Teledyne\Spinnaker\lib64\vs2015</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);Spinnaker_v140.lib;opencv_world490.lib;glfw3.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
