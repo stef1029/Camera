@@ -238,6 +238,7 @@ private:
         }
 
         while (keepRunning) {
+
             // Capture frame from the camera
             ImagePtr pResultImage = pCam->GetNextImage(1000);
 
@@ -531,6 +532,9 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& e) {
         cerr << "Error: " << e.what() << endl;
+        // Pause so the user can see the error message before closing
+        cout << "Camera error. Press Enter to close..." << endl;
+        std::cin.get();  // Wait for user to press Enter
         return -1;
     }
 
