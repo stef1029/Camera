@@ -196,6 +196,7 @@ private:
     size_t imageHeight;
     string pixelFormat;
     ofstream imageFile;  // Binary file to store image data
+    const int SIGNAL_CHECK_INTERVAL = 30;  // Check for signal every 30 frames
 
     const size_t bufferSize = 200;
 
@@ -304,6 +305,11 @@ private:
                     // Poll for input events
                     glfwPollEvents();
 
+                    // check for signal file from startup program
+                    if (checkForStopSignal()) {
+                        keepRunning = false;
+                    }
+
                     // Check if the user pressed the 'Esc' key or closed the window
                     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(window)) {
                         keepRunning = false;
@@ -335,6 +341,16 @@ private:
 
         frameIDFile.close();
     }
+
+    bool checkForStopSignal() {
+        if (frame_count % SIGNAL_CHECK_INTERVAL != 0) {
+            return false;  // Only check every Nth frame
+        }
+
+        string stop_signal_path = fs::path(path).string() + "/stop_camera_" + to_string(cam_no) + ".signal";
+        return fs::exists(stop_signal_path);
+    }
+
 
     void saveData()
     {
