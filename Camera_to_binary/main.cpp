@@ -367,6 +367,10 @@ private:
             }
         }
 
+        if (pCam) {
+            pCam->EndAcquisition();
+        }
+
         // After the loop, flush any remaining frame IDs in the buffer
         if (!frame_IDs.empty()) {
             for (const auto& frameID : frame_IDs) {
