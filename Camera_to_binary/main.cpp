@@ -60,38 +60,42 @@ class Tracker
 public:
     // Constructor
     Tracker(const string& mouse_ID, const string& start_time, const string& path,
-        int cam_no, float FPS, int windowWidth, int windowHeight)
+        const string& serial_number, float FPS, int windowWidth, int windowHeight)
         : mouse_ID(mouse_ID), start_time(start_time), path(path),
-        cam_no(cam_no), FPS(FPS), windowWidth(windowWidth),
+        camSerial(serial_number), FPS(FPS), windowWidth(windowWidth),
         windowHeight(windowHeight), frame_count(0)
     {
         system = System::GetInstance();
         CameraList camList = system->GetCameras();
 
         // Set serial number based on cam_no
-        if (cam_no == 1) {
-            camSerial = "22181614";
+        if (camSerial == "22181614") { // rig 1
             max_FPS = 170.0;
+            rig = "1";
         }
-        else if (cam_no == 2) {
-            camSerial = "20530175";
+        else if (camSerial == "20530175") {  // rig 2
             max_FPS = 170.0;
+            rig = "2";
         }
-        else if (cam_no == 3) {
-            camSerial = "24174008";
+        else if (camSerial == "24174008") {  // rig 3
             max_FPS = 170.0;
+            rig = "3";
         }
-        else if (cam_no == 4) {
-            camSerial = "24174020";
+        else if (camSerial == "24243513") { // rig 4
             max_FPS = 170.0;
+            rig = "4";
         }
-        else if (cam_no == 5) {  // Colour camera
-            camSerial = "23606054";
+        else if (camSerial == "24174020") { // openfield
             max_FPS = 170.0;
+            rig = "openfield";
         }
-        else if (cam_no == 6) {  // 6.3MP camera
-            camSerial = "21423798";
+        else if (camSerial == "23606054") {  // Colour camera
+            max_FPS = 170.0;
+            rig = "colour_camera";
+        }
+        else if (camSerial == "21423798") {  // 6.3MP camera
             max_FPS = 59.60;
+            rig = "6MP3_camera";
         }
         else {
             throw runtime_error("Invalid camera number");
@@ -102,7 +106,7 @@ public:
             FPS = max_FPS;
         }
 
-        windowTitle << "Rig " << cam_no << ". Press 'Esc' to stop session.";
+        windowTitle << "Rig " << rig << ". Press 'Esc' to stop session.";
         title = windowTitle.str();
 
         // Use GetBySerial to get the camera
@@ -114,6 +118,12 @@ public:
         }
 
         pCam->Init();
+
+        // Print host controller information
+        cout << "===== Host Controller Information =====" << endl;
+        printHostControllerInfo();
+        cout << "=======================================" << endl;
+
         setCameraFrameRate(FPS);    // Set the frame rate
         setGPIOLine2ToOutput();     // Set GPIO Line 2 to output
         setExposureTimeLowerLimit(4000.0);  // Set exposure time lower limit
@@ -188,10 +198,10 @@ private:
     string start_time;
     string end_time;
     string path;
-    int cam_no;
+    string camSerial;
+    string rig;
     float FPS;
     size_t frame_count;
-    string camSerial;
     float max_FPS;
     CameraPtr pCam;
     SystemPtr system;
@@ -438,7 +448,7 @@ private:
             return false;  // Only check every Nth frame
         }
 
-        string stop_signal_path = fs::path(path).string() + "/stop_camera_" + to_string(cam_no) + ".signal";
+        string stop_signal_path = fs::path(path).string() + "/stop_camera_" + rig + ".signal";
         return fs::exists(stop_signal_path);
     }
 
@@ -590,7 +600,7 @@ private:
     void createSignalFile()
     {
         // Create the signal file in the specified path
-        string signal_file = fs::path(path).string() + "/rig_" + to_string(cam_no) + "_camera_finished.signal";
+        string signal_file = fs::path(path).string() + "/rig_" + rig + "_camera_finished.signal";
         ofstream file(signal_file);
         file.close();
     }
@@ -632,6 +642,45 @@ private:
 
         ptrExposureTimeLowerLimit->SetValue(exposureTimeLowerLimit);
     }
+
+    void printHostControllerInfo()
+    {
+        // Access the Transport Layer node map
+        INodeMap& TLNodeMap = pCam->GetTLDeviceNodeMap();
+
+        // Get HostAdapterName
+        CStringPtr ptrHostAdapterName = TLNodeMap.GetNode("HostAdapterName");
+        if (IsReadable(ptrHostAdapterName))
+        {
+            cout << "Host Adapter Name: " << ptrHostAdapterName->GetValue() << endl;
+        }
+        else
+        {
+            cout << "Host Adapter Name: Not available" << endl;
+        }
+
+        // Get HostAdapterVendor
+        CStringPtr ptrHostAdapterVendor = TLNodeMap.GetNode("HostAdapterVendor");
+        if (IsReadable(ptrHostAdapterVendor))
+        {
+            cout << "Host Adapter Vendor: " << ptrHostAdapterVendor->GetValue() << endl;
+        }
+        else
+        {
+            cout << "Host Adapter Vendor: Not available" << endl;
+        }
+
+        // Get HostAdapterDriverVersion
+        CStringPtr ptrHostAdapterDriverVersion = TLNodeMap.GetNode("HostAdapterDriverVersion");
+        if (IsReadable(ptrHostAdapterDriverVersion))
+        {
+            cout << "Host Adapter Driver Version: " << ptrHostAdapterDriverVersion->GetValue() << endl;
+        }
+        else
+        {
+            cout << "Host Adapter Driver Version: Not available" << endl;
+        }
+    }
 };
 
 // Main function
@@ -640,7 +689,7 @@ int main(int argc, char** argv)
     string mouse_ID = "NoID";
     string date_time = "";
     string path = "";
-    int cam = 2;
+    string serial_number = "";
     float FPS = 60.0f;
     int windowWidth = 800;  // Default window width
     int windowHeight = 600; // Default window height
@@ -648,7 +697,6 @@ int main(int argc, char** argv)
     // Parse command-line arguments
     for (int i = 1; i < argc; i += 2) {
         string arg = argv[i];
-
         if (arg == "--id" && i + 1 < argc) {
             mouse_ID = argv[i + 1];
         }
@@ -658,8 +706,8 @@ int main(int argc, char** argv)
         else if (arg == "--path" && i + 1 < argc) {
             path = argv[i + 1];
         }
-        else if (arg == "--rig" && i + 1 < argc) {
-            cam = stoi(argv[i + 1]);
+        else if (arg == "--serial_number" && i + 1 < argc) {
+            serial_number = argv[i + 1];
         }
         else if (arg == "--fps" && i + 1 < argc) {
             FPS = stof(argv[i + 1]);
@@ -693,7 +741,7 @@ int main(int argc, char** argv)
     }
 
     try {
-        Tracker camera(mouse_ID, date_time, path, cam, FPS, windowWidth, windowHeight);
+        Tracker camera(mouse_ID, date_time, path, serial_number, FPS, windowWidth, windowHeight);
         camera.startTracking(true, true);
     }
     catch (const std::exception& e) {
